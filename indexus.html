@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>부미사 미국 구매대행 계산기</title>
+  <style>
+    body {
+      font-family: 'Nanum Gothic', sans-serif;
+      background-color: #f5f5f5;
+      padding: 40px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 24px;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+      margin-top: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin: 15px 5px 30px 0;
+    }
+    #result {
+      font-size: 22px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>부미사 미국 구매대행 계산기</h1>
+
+<label>미국 환율</label>
+<select id="exchangeRate">
+  <!-- 1200 ~ 1700, 10단위 -->
+</select>
+
+<label>판매가 (원)</label>
+<input type="text" id="sellingPrice" oninput="formatInput(this)">
+
+<label>현지 판매가 ($)</label>
+<input type="text" id="localPrice" oninput="formatInput(this)">
+
+<label>무게 (kg)</label>
+<select id="weight">
+  <!-- 1.0 ~ 20.0, 0.5단위 -->
+</select>
+
+<div>
+  <button onclick="calculateProfit()">계산하기</button>
+  <button onclick="resetFields()">리셋</button>
+</div>
+
+<div id="result">예상 마진: </div>
+
+<script>
+  const shippingFees = {
+    1.0: 13600, 1.5: 16100, 2.0: 18500, 2.5: 21000, 3.0: 23400,
+    3.5: 25900, 4.0: 28300, 4.5: 30800, 5.0: 33200, 5.5: 35600,
+    6.0: 38100, 6.5: 40500, 7.0: 42900, 7.5: 45400, 8.0: 47900,
+    8.5: 50400, 9.0: 52900, 9.5: 55400, 10.0: 57900, 10.5: 60400,
+    11.0: 62900, 11.5: 65400, 12.0: 67900, 12.5: 70400, 13.0: 72900,
+    13.5: 75400, 14.0: 77900, 14.5: 80400, 15.0: 82900, 15.5: 85400,
+    16.0: 87900, 16.5: 90400, 17.0: 92900, 17.5: 95400, 18.0: 97900,
+    18.5: 100400, 19.0: 102900, 19.5: 105400, 20.0: 107900
+  }
+
+  // 환율 옵션 생성
+  const exchangeRateSelect = document.getElementById('exchangeRate');
+  for (let i = 1200; i <= 1700; i += 10) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.text = i;
+    exchangeRateSelect.appendChild(opt);
+  }
+
+  // 무게 옵션 생성
+  const weightSelect = document.getElementById('weight');
+  for (let i = 2; i <= 40; i++) {
+    const kg = (i * 0.5).toFixed(1);
+    const opt = document.createElement('option');
+    opt.value = kg;
+    opt.text = kg;
+    weightSelect.appendChild(opt);
+  }
+
+  function parseNumber(str) {
+    return parseInt(str.replace(/,/g, '')) || 0;
+  }
+
+  function formatInput(input) {
+    let val = input.value.replace(/,/g, '');
+    if (!isNaN(val) && val !== "") {
+      input.value = parseInt(val).toLocaleString();
+    }
+  }
+
+  function calculateProfit() {
+    const exchangeRate = parseFloat(document.getElementById('exchangeRate').value);
+    const sellingPrice = parseNumber(document.getElementById('sellingPrice').value);
+    const localPrice = parseNumber(document.getElementById('localPrice').value);
+    const weight = parseFloat(document.getElementById('weight').value);
+
+    const shippingFee = shippingFees[weight] || 0;
+    const cost = localPrice * exchangeRate * 1.024 + shippingFee;
+    const profit = Math.floor(sellingPrice * 0.95 - cost);
+
+    const resultEl = document.getElementById('result');
+    const color = profit >= 0 ? 'red' : 'blue';
+    resultEl.innerHTML = `예상 마진: <span style="color:${color}">${profit.toLocaleString()} 원</span>`;
+  }
+
+  function resetFields() {
+    document.getElementById('sellingPrice').value = '';
+    document.getElementById('localPrice').value = '';
+    document.getElementById('exchangeRate').selectedIndex = 0;
+    document.getElementById('weight').selectedIndex = 0;
+    document.getElementById('result').innerText = '예상 마진: ';
+  }
+</script>
+
+</body>
+</html>
