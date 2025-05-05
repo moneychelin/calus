@@ -43,7 +43,7 @@
 
 <label>미국 환율</label>
 <select id="exchangeRate">
-  <option value="">-- 선택하세요 --</option>
+  <!-- 1200 ~ 1700, 10단위 -->
 </select>
 
 <label>판매가 (원)</label>
@@ -54,7 +54,7 @@
 
 <label>무게 (kg)</label>
 <select id="weight">
-  <option value="">-- 선택하세요 --</option>
+  <!-- 1.0 ~ 20.0, 0.5단위 -->
 </select>
 
 <div>
@@ -74,7 +74,7 @@
     13.5: 75400, 14.0: 77900, 14.5: 80400, 15.0: 82900, 15.5: 85400,
     16.0: 87900, 16.5: 90400, 17.0: 92900, 17.5: 95400, 18.0: 97900,
     18.5: 100400, 19.0: 102900, 19.5: 105400, 20.0: 107900
-  };
+  }
 
   // 환율 옵션 생성
   const exchangeRateSelect = document.getElementById('exchangeRate');
@@ -112,18 +112,13 @@
     const localPrice = parseNumber(document.getElementById('localPrice').value);
     const weight = parseFloat(document.getElementById('weight').value);
 
-    if (isNaN(exchangeRate) || isNaN(weight) || sellingPrice === 0 || localPrice === 0) {
-      alert("모든 값을 올바르게 입력해 주세요.");
-      return;
-    }
-
     const shippingFee = shippingFees[weight] || 0;
     const cost = localPrice * exchangeRate * 1.024 + shippingFee;
     const profit = Math.floor(sellingPrice * 0.95 - cost);
 
     const resultEl = document.getElementById('result');
     const color = profit >= 0 ? 'red' : 'blue';
-    resultEl.innerHTML = `예상 마진: <span style="color:${color}">${profit.toLocaleString()} 원</span>`;
+    resultEl.innerHTML = 예상 마진: <span style="color:${color}">${profit.toLocaleString()} 원</span>;
   }
 
   function resetFields() {
