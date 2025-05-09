@@ -50,15 +50,14 @@
 <input type="text" id="sellingPrice" oninput="formatInput(this)">
 
 <label>현지 판매가 ($)</label>
-<input type="text" id="localPrice" oninput="formatInput(this)">
+<input type="text" id="localPrice">
 
 <label>무게 (kg)</label>
-<select id="weight">
+<select id="weight" onchange="calculateProfit()">
   <option value="">-- 선택하세요 --</option>
 </select>
 
 <div>
-  <button onclick="calculateProfit()">계산하기</button>
   <button onclick="resetFields()">리셋</button>
 </div>
 
@@ -76,7 +75,6 @@
     18.5: 100400, 19.0: 102900, 19.5: 105400, 20.0: 107900
   };
 
-  // 환율 옵션 생성
   const exchangeRateSelect = document.getElementById('exchangeRate');
   for (let i = 1200; i <= 1700; i += 10) {
     const opt = document.createElement('option');
@@ -85,7 +83,6 @@
     exchangeRateSelect.appendChild(opt);
   }
 
-  // 무게 옵션 생성
   const weightSelect = document.getElementById('weight');
   for (let i = 2; i <= 40; i++) {
     const kg = (i * 0.5).toFixed(1);
@@ -109,11 +106,11 @@
   function calculateProfit() {
     const exchangeRate = parseFloat(document.getElementById('exchangeRate').value);
     const sellingPrice = parseNumber(document.getElementById('sellingPrice').value);
-    const localPrice = parseNumber(document.getElementById('localPrice').value);
+    const localPrice = parseFloat(document.getElementById('localPrice').value);
     const weight = parseFloat(document.getElementById('weight').value);
 
-    if (isNaN(exchangeRate) || isNaN(weight) || sellingPrice === 0 || localPrice === 0) {
-      alert("모든 값을 올바르게 입력해 주세요.");
+    if (isNaN(exchangeRate) || isNaN(weight) || sellingPrice === 0 || isNaN(localPrice)) {
+      document.getElementById('result').innerHTML = "예상 마진: ";
       return;
     }
 
@@ -129,10 +126,16 @@
   function resetFields() {
     document.getElementById('sellingPrice').value = '';
     document.getElementById('localPrice').value = '';
-    document.getElementById('exchangeRate').selectedIndex = 0;
     document.getElementById('weight').selectedIndex = 0;
     document.getElementById('result').innerText = '예상 마진: ';
+    document.getElementById('sellingPrice').focus();
   }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      resetFields();
+    }
+  });
 </script>
 
 </body>
